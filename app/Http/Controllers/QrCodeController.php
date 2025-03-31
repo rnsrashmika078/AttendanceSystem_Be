@@ -48,6 +48,13 @@ class QrCodeController extends Controller
             'qr_code' => 'nullable|string',
         ]);
         $upDateQRCode = QrCode::find($id);
+        if (!$upDateQRCode) {
+            return response()->json([
+                'success' => false,
+                'message' => 'id Not found',
+                'id' => $id
+            ], 404);
+        }
         if ($upDateQRCode) {
             $upDateQRCode->update([
                 // 'id' => $request->id ?? $upDateQRCode->id,
@@ -61,6 +68,24 @@ class QrCodeController extends Controller
         return response()->json([
             'success' => false,
             'message' => 'error while adding qr code to the database',
+        ], 404);
+    }
+
+    public function deleteQRRecord($id)
+    {
+        $qrRec = QrCode::find($id);
+        if ($qrRec) {
+            $qrRec->delete();
+            return response()->json([
+                'sucess' => true,
+                'message' => 'Record Deleted Successfully!'
+            ]);
+        }
+
+        return response()->json([
+            'sucess' => false,
+
+            'message' => 'Record Not Found!'
         ], 404);
     }
 }

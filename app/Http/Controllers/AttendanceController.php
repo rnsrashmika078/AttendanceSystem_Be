@@ -38,15 +38,19 @@ class AttendanceController extends Controller
     }
     public function getAttendanceResult($date, $subject_code)
     {
-        $selectedData = Carbon::parse($date);
+        $selectedDate = Carbon::parse($date);
         $subject = Attendance::where('subject_code', $subject_code)->first();
 
         if (!$subject) {
-            return response()->json(['message' => 'Subject not found'], 404);
+            return response()->json(['message' => 'No record of this subject being conducted on the specified date.'], 404);
+        }
+
+        if (!$selectedDate) {
+            return response()->json(['message' => 'The subject was not conducted on the specified date.'], 404);
         }
 
         $attendace = Attendance::where('subject_code', $subject_code)
-            ->whereDate('created_at', $selectedData)
+            ->whereDate('created_at', $selectedDate)
             ->get();
 
 
@@ -58,7 +62,8 @@ class AttendanceController extends Controller
         }
         return response()->json([
             'status' => true,
-            'message' => $attendace,
+            'message' => "Retrive Attendace of $subject_code on $date",
+            'data' => $attendace,
         ]);
     }
 }

@@ -3,8 +3,10 @@
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LectureController;
 use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\QrRecordHistoryController;
 use App\Http\Controllers\TimeRangeController;
 use App\Http\Controllers\TimeTableController;
+use App\Models\QrRecordHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
@@ -52,9 +54,15 @@ Route::delete('/delete/{id}', [TimeTableController::class, 'deleteTimeSlot']);
 Route::put('/qr_update/{id}', [QrCodeController::class, 'updateQRCode']);
 Route::get('/qr_get/{id}', [QrCodeController::class, 'getQRCode']);
 Route::post('/qr_create', [QrCodeController::class, 'createQR_ID']);
+Route::delete('/qr_delete/{id}', [QrCodeController::class, 'deleteQRRecord']);
+
 
 
 
 // Mark Attendance API Routes
 Route::get('/get_attendance_result/{date}/{subject_Code}', action: [AttendanceController::class, 'getAttendanceResult']);
 Route::post('/mark_attendance', [AttendanceController::class, 'markAttendance']);
+
+// QR Record History
+Route::post('/create_qr_record', [QrRecordHistoryController::class, 'createQR_ID']);
+Route::get('/get_record_history/{date}/{subject_Code}', action: [QrRecordHistoryController::class, 'getRecordHistory']);

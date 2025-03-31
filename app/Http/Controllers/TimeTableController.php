@@ -9,7 +9,15 @@ class TimeTableController extends Controller
     public function getAll(Request $request)
     {
         $data = TimeTable::all();
+        if ($data->isEmpty()) {
+            return response()->json([
+                "status"=> false,
+                "message" => "No Records!",
+                "data" => $data
+            ]);
+        }
         return response()->json([
+            "status"=> true,
             "message" => "All Data receive Successfully!",
             "data" => $data
         ]);
@@ -42,23 +50,23 @@ class TimeTableController extends Controller
         ]);
         $user = TimeTable::create([
 
-            'start_time'  => $request->start_time,
+            'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             // first year
             'year_1_lecturer' => $request->year_1_sem_1,
-            'year_1_lecture'=> $request->year_1_lecture,
+            'year_1_lecture' => $request->year_1_lecture,
             'year_1_lecture_hall' => $request->year_1_lecture_hall,
             // second year
             'year_2_lecturer' => $request->year_2_lecturer,
             'year_2_lecture' => $request->year_2_lecture,
             'year_2_lecture_hall' => $request->year_2_lecture_hall,
             // third year
-            'year_3_lecturer'=> $request->year_3_lecturer,
+            'year_3_lecturer' => $request->year_3_lecturer,
             'year_3_lecture' => $request->year_3_lecture,
             'year_3_lecture_hall' => $request->year_3_lecture_hall,
             // forth year
-            'year_4_lecturer'=> $request->year_4_lecturer,
-            'year_4_lecture'=> $request->year_4_lecture,
+            'year_4_lecturer' => $request->year_4_lecturer,
+            'year_4_lecture' => $request->year_4_lecture,
             'year_4_lecture_hall' => $request->year_4_lecture_hall,
         ]);
         return response()->json([
