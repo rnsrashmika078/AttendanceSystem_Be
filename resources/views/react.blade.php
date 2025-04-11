@@ -12,7 +12,7 @@
 <body>
     <div id="root"></div>
     <!-- Link to the JS file -->
-    <script src="{{ secure_asset('react/assets/index-DhdGdqdt.js') }}"></script>
+    <script src="{{ secure_asset('react/assets/index-DKbhaLpF.js') }}"></script>
 </body>
 
 </html>
