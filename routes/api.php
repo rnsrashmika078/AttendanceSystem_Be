@@ -64,5 +64,6 @@ Route::get('/get_attendance_result/{date}/{subject_Code}', action: [AttendanceCo
 Route::post('/mark_attendance', [AttendanceController::class, 'markAttendance']);
 
 // QR Record History
-Route::post('/create_qr_record', [QrRecordHistoryController::class, 'createQR_ID']);
+Route::post('/create_qr_record/{subject_code}', [QrRecordHistoryController::class, 'createRecordHistory']);
 Route::get('/get_record_history/{date}/{subject_Code}', action: [QrRecordHistoryController::class, 'getRecordHistory']);
+

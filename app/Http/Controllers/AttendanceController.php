@@ -17,12 +17,15 @@ class AttendanceController extends Controller
             'student_name' => 'required',
         ]);
 
+
+
         $record = Attendance::create([
             'attendance' => $request->attendance,
             'subject_code' => $request->subject_code,
             'student_reg_no' => $request->student_reg_no,
             'student_name' => $request->student_name,
         ]);
+        $record->created_at = Carbon::parse($record->created_at)->setTimezone('Asia/Colombo');
 
         if (!$record) {
             return response()->json([
@@ -42,11 +45,11 @@ class AttendanceController extends Controller
         $subject = Attendance::where('subject_code', $subject_code)->first();
 
         if (!$subject) {
-            return response()->json(['message' => 'No record of this subject being conducted on the specified date.'], 404);
+            return response()->json(['message' => 'No record of this subject being conducted on the specified date.']);
         }
 
         if (!$selectedDate) {
-            return response()->json(['message' => 'The subject was not conducted on the specified date.'], 404);
+            return response()->json(['message' => 'The subject was not conducted on the specified date.']);
         }
 
         $attendace = Attendance::where('subject_code', $subject_code)

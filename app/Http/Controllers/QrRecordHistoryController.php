@@ -8,24 +8,32 @@ use Illuminate\Http\Request;
 
 class QrRecordHistoryController extends Controller
 {
-    public function createQR_ID(Request $request)
+    public function createRecordHistory(Request $request, $subject_code)
     {
-        $qr = QrRecordHistory::create([
-            'sub_code' => $request->sub_code,
-            'status' => $request->status,
-        ]);
-        if (!$qr) {
+        $exist = QrRecordHistory::where("sub_code", $subject_code)->first();
+        if ($exist) {
+            $exist->update([
+                'sub_code' => $request->sub_code ?? $exist->sub_code,
+                'status' => $request->status ?? $exist->status,
+            ]);
             return response()->json([
-                'success' => false,
-                'message' => 'QR History failed while update!',
+                'success' => true,
+                'message' => 'QR History updated successfully!',
+                'data' => $exist
+            ]);
+        } else {
+            $qr = QrRecordHistory::create([
+                'sub_code' => $request->sub_code,
+                'status' => $request->status,
+            ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'QR History has been Updated!',
+                'data' => $qr
+
             ]);
         }
-        return response()->json([
-            'success' => true,
-            'message' => 'QR History has been Updated!',
-            'data' => $qr
 
-        ]);
     }
 
     public function getRecordHistory($date, $subject_code)
@@ -38,11 +46,11 @@ class QrRecordHistoryController extends Controller
         if (!$subject) {
             return response()->json(['message' => 'No record of this subject being conducted on the specified date.'], );
         }
-        
+
         if (!$selectedDate) {
             return response()->json(['message' => 'The subject was not conducted on the specified date.'], );
         }
-        
+
         $attendace = QrRecordHistory::where('sub_code', $subject_code)
             ->whereDate('created_at', $selectedDate)
             ->get();
