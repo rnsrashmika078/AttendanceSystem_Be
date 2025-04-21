@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\Lecturer;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Hash;
 class StudentController extends Controller
 {
+
+    public function authCheck (Request $request) {
+        return Auth::id();
+    }
     public function login(Request $request)
     {
         $request->validate([
@@ -78,6 +83,7 @@ class StudentController extends Controller
             'account_type' => 'string',
             'dp' => 'nullable|string',
             'init_name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
             'email' => 'required|email',
             'password' => 'string|required',
             'registration_no' => 'string|required',
@@ -109,6 +115,7 @@ class StudentController extends Controller
             'account_type' =>  $request->account_type,
             'dp' => $request->dp,
             'init_name' => $request->init_name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'registration_no' => $request->registration_no,

@@ -12,6 +12,7 @@ class Student extends Model
         'account_type',
         'dp', //optional
         'init_name',
+        'username',
         'email',
         'password',
         'registration_no',

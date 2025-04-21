@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AllController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\LectureController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\QrRecordHistoryController;
@@ -67,3 +69,15 @@ Route::post('/mark_attendance', [AttendanceController::class, 'markAttendance'])
 Route::post('/create_qr_record/{subject_code}', [QrRecordHistoryController::class, 'createRecordHistory']);
 Route::get('/get_record_history/{date}/{subject_Code}', action: [QrRecordHistoryController::class, 'getRecordHistory']);
 
+
+// Message
+Route::middleware('auth:sanctum')->post('/message', [ChatController::class, 'sendMessage']);
+Route::get("/oldMessages/{id}", [ChatController::class, "retriveOldMessage"]);
+
+
+//ALL ROUTES
+Route::get("/getAllUsers", [AllController::class, "getAll"]);
+
+//  Friends
+Route::get("/getAllFriends/{email}", [ChatController::class, "getAllFriends"]);
+Route::post("/addFriend", [ChatController::class, "addFriend"]);

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('account_type');
             $table->string('dp')->nullable();
             $table->string('init_name');
+            $table->string('username');
             $table->string('email');
             $table->string('password');
             $table->string('department');
