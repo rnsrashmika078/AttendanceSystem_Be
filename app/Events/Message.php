@@ -11,14 +11,16 @@ class Message implements ShouldBroadcast
     public $chatId;
     public $message;
     public $recieverEmail;
+    public $time;
 
     // Constructor that takes sender_id, recipient_id, and content
-    public function __construct($senderEmail, $chatId, $message,$recieverEmail)
+    public function __construct($senderEmail, $chatId, $message,$recieverEmail,$time)
     {
         $this->senderEmail = $senderEmail;
         $this->chatId = $chatId;
         $this->message = $message;
         $this->recieverEmail = $recieverEmail;
+        $this->time = $time;
 
         // Log::info("📡 Broadcasting to channel", [
         //     'channel' => 'private.user.' . $chatId,
@@ -47,7 +49,8 @@ class Message implements ShouldBroadcast
             'senderEmail' => $this->senderEmail,
             'recieverEmail' => $this->recieverEmail,
             'message' => $this->message,
-            'chatId' => $this->chatId
+            'chatId' => $this->chatId,
+            'time' => $this->time,
         ];
     }
 }

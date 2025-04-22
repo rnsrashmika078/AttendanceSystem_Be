@@ -16,12 +16,14 @@ class ChatController extends Controller
         $chatId = $request->chatId;
         $recieverEmail = $request->recieverEmail;
         $message = $request->message;
+        $time = $request->time;
 
         $messages = ChatMessage::create([
             'senderEmail' => $senderEmail,
             'recieverEmail' => $recieverEmail,
             'chatId' => $chatId,
             'message' => $message,
+            'time' => $time
         ]);
         if (!$messages) {
             Log::info("📡 Store message in dB", [
@@ -37,7 +39,7 @@ class ChatController extends Controller
         //     'message' => $messages,
         //     'chatId' => $chatId,
         // ]);
-        broadcast(new Message($senderEmail, $chatId, $message, $recieverEmail));
+        broadcast(new Message($senderEmail, $chatId, $message, $recieverEmail, $time));
 
         return response()->json(['status' => 'Message sent!']);
     }

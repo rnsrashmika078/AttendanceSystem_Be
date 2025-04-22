@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('senderEmail');
             $table->string('chatId');
             $table->string('message');
+            $table->string('time');
             $table->timestamps();
         });
     }
