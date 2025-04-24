@@ -17,12 +17,16 @@ class ChatController extends Controller
         $recieverEmail = $request->recieverEmail;
         $message = $request->message;
         $time = $request->time;
+        $username = $request->username;
+        $status = $request->status;
 
         $messages = ChatMessage::create([
             'senderEmail' => $senderEmail,
             'recieverEmail' => $recieverEmail,
             'chatId' => $chatId,
             'message' => $message,
+            'username' => $username,
+            'status' => $status,
             'time' => $time
         ]);
         if (!$messages) {
@@ -39,7 +43,7 @@ class ChatController extends Controller
         //     'message' => $messages,
         //     'chatId' => $chatId,
         // ]);
-        broadcast(new Message($senderEmail, $chatId, $message, $recieverEmail, $time));
+        broadcast(new Message($senderEmail, $chatId, $message, $recieverEmail, $time,$username,$status));
 
         return response()->json(['status' => 'Message sent!']);
     }
@@ -50,6 +54,14 @@ class ChatController extends Controller
         $oldMessages = ChatMessage::where('chatId', $id)->get();
 
         return response()->json($oldMessages);
+
+    }
+    public function retriveNotification(Request $request, $email)
+    {
+
+        $oldNotifications = ChatMessage::where('recieverEmail', $email)->get();
+
+        return response()->json($oldNotifications);
 
     }
     public function addFriend(Request $request)
