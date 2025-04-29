@@ -71,7 +71,9 @@ Route::get('/get_record_history/{date}/{subject_Code}', action: [QrRecordHistory
 
 
 // Message
-Route::middleware('auth:sanctum')->post('/message', [ChatController::class, 'sendMessage']);
+// Route::middleware('auth:sanctum')->post('/message', [ChatController::class, 'sendMessage']);
+Route::post('/message', [ChatController::class, 'sendMessage']);
+
 Route::get("/oldMessages/{id}", [ChatController::class, "retriveOldMessage"]);
 
 
