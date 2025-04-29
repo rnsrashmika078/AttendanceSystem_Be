@@ -20,7 +20,7 @@ class ChatController extends Controller
         $username = $request->username;
         $status = $request->status;
 
-        broadcast(new Message($senderEmail, $chatId, message: $message, $recieverEmail, $time, $username, $status));
+        broadcast(new Message($senderEmail, $chatId, $message, $recieverEmail, $time, $username, $status));
 
         $messages = ChatMessage::create([
             'senderEmail' => $senderEmail,
