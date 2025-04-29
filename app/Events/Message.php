@@ -28,13 +28,8 @@ class Message implements ShouldBroadcast
         $this->status = $status;
 
 
-        // Log::info("📡 Broadcasting to channel", [
-        //     'channel' => 'private.user.' . $chatId,
-        //     'sender' => $senderEmail,
-        //     'recipient' => $chatId,
-        // ]);
+     
     }
-    // Broadcast on a private channel
     public function broadcastOn()
     {
 
