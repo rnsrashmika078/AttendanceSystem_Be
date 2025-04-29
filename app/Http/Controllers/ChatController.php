@@ -20,27 +20,27 @@ class ChatController extends Controller
         $username = $request->username;
         $status = $request->status;
 
-        // $messages = ChatMessage::create([
-        //     'senderEmail' => $senderEmail,
-        //     'recieverEmail' => $recieverEmail,
-        //     'chatId' => $chatId,
-        //     'message' => $message,
-        //     'username' => $username,
-        //     'status' => $status,
-        //     'time' => $time
-        // ]);
-        // if (!$messages) {
-        //     Log::info("📡 Store message in dB", [
-        //         'message' => "error while store message in db",
-        //         'chatId' => $chatId,
-        //     ]);
-        //     return response()->json([
-        //         'message' => "error while store message in db",
-        //         'success' => false
-        //     ]);
-        // }
-     
-        broadcast(new Message($senderEmail, $chatId, $message, $recieverEmail, $time,$username,$status));
+        $messages = ChatMessage::create([
+            'senderEmail' => $senderEmail,
+            'recieverEmail' => $recieverEmail,
+            'chatId' => $chatId,
+            'message' => $message,
+            'username' => $username,
+            'status' => $status,
+            'time' => $time
+        ]);
+        if (!$messages) {
+            // Log::info("📡 Store message in dB", [
+            //     'message' => "error while store message in db",
+            //     'chatId' => $chatId,
+            // ]);
+            return response()->json([
+                'message' => "error while store message in db",
+                'success' => false
+            ]);
+        }
+
+        broadcast(new Message($senderEmail, $chatId, $message, $recieverEmail, $time, $username, $status));
 
         return response()->json(['status' => 'Message sent!']);
     }
