@@ -75,7 +75,7 @@ Route::get('/get_record_history/{date}/{subject_Code}', action: [QrRecordHistory
 Route::post('/message', [ChatController::class, 'sendMessage']);
 
 Route::get("/oldMessages/{id}", [ChatController::class, "retriveOldMessage"]);
-
+Route::get("/latestMessage", [ChatController::class, "retrivelatestMessage"]);
 
 //ALL ROUTES
 Route::get("/getAllUsers", [AllController::class, "getAll"]);

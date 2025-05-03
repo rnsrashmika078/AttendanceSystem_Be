@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laravel + React</title>
     <!-- Link to the CSS file -->
-    <link rel="stylesheet" href="{{ secure_asset('react/assets/index-B4sijXhh.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('react/assets/index-ZAYM0WKn.css') }}">
 </head>
 
 <body>
     <div id="root"></div>
     <!-- Link to the JS file -->
-    <script src="{{ secure_asset('react/assets/index-w8vhlqq5.js') }}"></script>
+    <script src="{{ secure_asset('react/assets/index-DfDDHxN2.js') }}"></script>
 </body>
 
 </html>

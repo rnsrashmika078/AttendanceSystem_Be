@@ -41,9 +41,6 @@ class ChatController extends Controller
                 'success' => false
             ]);
         }
-
-
-
         return response()->json(['status' => 'Message sent!']);
     }
 
@@ -53,6 +50,21 @@ class ChatController extends Controller
         $oldMessages = ChatMessage::where('chatId', $id)->get();
 
         return response()->json($oldMessages);
+
+    }
+    public function retrivelatestMessage(Request $request)
+    {
+        $latestMessageIds = ChatMessage::selectRaw('MAX(created_at)')
+            // ->where('recieverEmail', $email)
+            ->groupBy('chatId');
+
+        $latestMessages = ChatMessage::whereIn('created_at', $latestMessageIds)->get();
+
+        return response()->json(
+            $latestMessages
+        );
+
+
 
     }
     public function retriveNotification(Request $request, $email)

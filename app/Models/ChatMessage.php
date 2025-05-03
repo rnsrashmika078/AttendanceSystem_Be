@@ -9,6 +9,6 @@ class ChatMessage extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['senderEmail', 'chatId', 'message','time', 'username', 'status'];
+    protected $fillable = ['senderEmail', 'recieverEmail', 'chatId', 'message', 'time', 'username', 'status'];
 
 }
