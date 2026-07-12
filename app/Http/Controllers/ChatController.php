@@ -111,6 +111,18 @@ class ChatController extends Controller
     public function getAllFriends($email)
     {
         $allFriends = Friends::where('userEmail', $email)->get();
-        return response()->json($allFriends);
+        $latestMessageIds = ChatMessage::selectRaw('MAX(created_at)')
+            // ->where('recieverEmail', $email)
+            ->groupBy('chatId');
+
+        $latestMessages = ChatMessage::whereIn('created_at', $latestMessageIds)->get();
+
+        // return response()->json(
+        //     $latestMessages
+        // );
+        return response()->json([
+            'allFriends' => $allFriends,
+            'lastMessage' => $latestMessages,
+        ]);
     }
 }

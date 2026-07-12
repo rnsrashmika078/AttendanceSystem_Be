@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AllController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\LectureController;
 use App\Http\Controllers\QrCodeController;
@@ -83,3 +84,14 @@ Route::get("/getAllUsers", [AllController::class, "getAll"]);
 //  Friends
 Route::get("/getAllFriends/{email}", [ChatController::class, "getAllFriends"]);
 Route::post("/addFriend", [ChatController::class, "addFriend"]);
+
+
+
+
+
+// refine ( AUTH )
+// Route::prefix('v1/auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
+// });
