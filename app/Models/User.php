@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -56,5 +58,13 @@ class User extends Authenticatable
             'password' => 'hashed',
             'email_verified' => 'boolean'
         ];
+    }
+
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'subject_user', 'user_id', 'subject_id')
+            ->using(SubjectUser::class)
+            ->withPivot('role')
+            ->withTimestamps();
     }
 }
