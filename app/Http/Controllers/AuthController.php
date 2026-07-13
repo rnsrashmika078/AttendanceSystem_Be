@@ -25,6 +25,7 @@ class AuthController extends Controller
             'username' => $data['username'],
             'role' =>  $data['role'],
             'email' =>  $data['email'],
+            'reg_number' =>  $data['reg_number'],
             'password' => Hash::make($data['password']),
         ]);
         Log::info('Event Triggered!', [
@@ -32,10 +33,9 @@ class AuthController extends Controller
         ]);
         $this->generateOTP($user->email, $user->username);
 
-        // Auth::login($user);
 
         return response()->json([
-            "status" => true,
+            "success" => true,
             "message" => "Waiting for OTP Verification",
             "email" => $user->email,
         ]);
@@ -43,14 +43,27 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
+
         if (!Auth::attempt($request->validated())) {
             return response()->json(['message' => 'Invalid credentials', 'status' => false], 401);
         }
+        $user = Auth::user();
 
+        if (!$user->hasVerifiedEmail()) {
+            $this->generateOTP($user->email, $user->username);
+
+            return response()->json([
+                'message' => 'Redirect to verification',
+                'success' => false,
+                'isVerified' => false,
+            ]);
+        }
         return response()->json([
-            "status" => true,
+            "success" => true,
             "message" => "Successfully Logged in!",
-            "user" => new UserResource(Auth::user())
+            "user" => new UserResource(Auth::user()),
+            'isVerified' => true,
+
         ]);
     }
 
@@ -114,7 +127,12 @@ class AuthController extends Controller
 
         $otp->update(['is_used' => true]);
         $user = User::where('email', $validate['email'])->firstOrFail();
+        Log::info("GETTING USER", [
+            'user' => $user
+        ]);
         $user->update(['email_verified_at' => now(), 'email_verified' => true]);
+
+        Auth::login($user);
 
         return response()->json([
             "success" => true,

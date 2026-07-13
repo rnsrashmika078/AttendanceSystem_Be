@@ -1,5 +1,8 @@
 <?php
 
+use App\Events\PresenceChannelEvent;
+use App\Events\PrivateChannelEvent;
+use App\Events\PublicChannelEvent;
 use App\Http\Controllers\AllController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
@@ -9,11 +12,14 @@ use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\QrRecordHistoryController;
 use App\Http\Controllers\TimeRangeController;
 use App\Http\Controllers\TimeTableController;
+use App\Http\Controllers\WebsocketController;
 use App\Models\QrRecordHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\LecturerController;
+use Illuminate\Support\Facades\Broadcast;
+use Laravel\Reverb\Protocols\Pusher\Channels\PrivateCacheChannel;
 
 
 //Student API Routes
@@ -99,3 +105,15 @@ Route::post('/generate-otp', [AuthController::class, 'generateOTP'])->middleware
 Route::post('/verify-otp', [AuthController::class, 'verifyOTP']);
 
 // });
+
+
+// websocket
+// Route::get('send-message', function () {
+//     event(new PrivateChannelEvent('Hello motherfucker', 1));
+//     // event(new PublicChannelEvent('Hello motherfucker'));
+//     // event(new PresenceChannelEvent('Hello everyone!', 1));
+//     return 'done';
+// });
+Route::post('send-message', [WebsocketController::class, 'sendMessage'])->middleware('auth:sanctum');
+
+Route::post('session', [WebsocketController::class, 'session'])->middleware('auth:sanctum');

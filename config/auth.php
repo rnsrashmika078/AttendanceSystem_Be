@@ -37,7 +37,12 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session', //previos : session
+            'driver' => 'session', 
+            'provider' => 'users',
+        ],
+        //  newly added 
+        'api' => [
+            'driver' => 'sanctum', 
             'provider' => 'users',
         ],
     ],
