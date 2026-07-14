@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('year');
             $table->string('subject_code')->unique()->index();
             $table->string('subject');
-            $table->string('lecturer');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });

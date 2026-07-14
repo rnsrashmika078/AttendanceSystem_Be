@@ -27,8 +27,7 @@ class SubjectsRequest extends FormRequest
             'user_id' => 'required|integer',
             'subject_code' => 'required|string',
             'subject' => 'required|string',
-            'lecturer' => 'required|string',
-
+            // 'lecturer' => 'required|string',
         ];
     }
 }

@@ -12,7 +12,6 @@ class Subject extends Model
         'year',
         'subject_code',
         'subject',
-        'lecturer',
         'user_id',
 
     ];

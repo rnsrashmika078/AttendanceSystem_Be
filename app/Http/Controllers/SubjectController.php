@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SubjectsRequest;
-use App\Http\Resources\SubjectsResource;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,13 +11,28 @@ use Illuminate\Support\Facades\Log;
 
 class SubjectController extends Controller
 {
-    public function getAllSubjects()
+    public function getAllSubjects(Request $request)
     {
-        $allSubjects = Subject::with('users')->get();
+        $page = $request->query('page', 1);
+        $perPage = $request->query('limit', 5);
+        $search = $request->query('search', null);
+        $query = Subject::with('users');
+
+        Log::info("Query search", [
+            'serach' => $search
+        ]);
+
+        if ($search !== null && trim($search) !== '' && $search !== 'undefined') {
+            $query->where('subject', 'LIKE', "%{$search}%");
+        }
+        $allSubjects = $query->paginate($perPage, ['*'], 'page', $page);
         return response()->json([
             "success" => true,
             "message" => "retrived all subjects",
-            "all_subjects" => $allSubjects
+            "all_subjects" => $allSubjects->items(),
+            'hasMore' => $allSubjects->hasMorePages(),
+            'currentPage' => $allSubjects->currentPage()
+
         ]);
     }
     public function addSubject(SubjectsRequest $request)
@@ -31,12 +45,9 @@ class SubjectController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "Subject already exists!",
-            ]);
+            ], 409);
         }
         $newSubject = Subject::create($validate);
-        Log::info("validated user", [
-            'user' => Auth::user()
-        ]);
 
         $newSubject->users()->attach(1);
         return response()->json([
@@ -44,7 +55,7 @@ class SubjectController extends Controller
             "message" => "Successfully Added the subject",
             "new_subject" => $newSubject
             // "new_subject" =>  new SubjectsResource($newSubject)
-        ]);
+        ], 201);
     }
     public function removeSubject()
     {

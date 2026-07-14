@@ -21,7 +21,6 @@ class SubjectsResource extends JsonResource
             'user_id' => $this->user_id,
             'subject_code' => $this->subject_code,
             'subject' => $this->subject,
-            'lecturer' => $this->lecturer,
 
             'users' => $this->users->map(function ($user) {
                 return [
