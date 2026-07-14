@@ -14,9 +14,17 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Services\OTPService;
 
 class AuthController extends Controller
 {
+    private OTPService $otpService;
+
+    public function __construct(OTPService $otpService)
+    {
+        $this->otpService = $otpService;
+    }
+
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
@@ -28,51 +36,71 @@ class AuthController extends Controller
             'reg_number' =>  $data['reg_number'],
             'password' => Hash::make($data['password']),
         ]);
-        Log::info('Event Triggered!', [
-            'data' => $data
-        ]);
-        $this->generateOTP($user->email, $user->username);
+
+        $this->otpService->sendOTP($user->email, $user->username);
 
 
         return response()->json([
             "success" => true,
             "message" => "Waiting for OTP Verification",
-            "email" => $user->email,
-        ]);
+            "user" => $user,
+        ], 202);
     }
 
     public function login(LoginRequest $request)
     {
+        $validated = $request->validated();
+        $exist = User::where('email', $validated['email'])->first();
 
-        if (!Auth::attempt($request->validated())) {
-            return response()->json(['message' => 'Invalid credentials', 'status' => false], 401);
+
+        if (!$exist) {
+            return response()->json([
+                'message' => 'User not found..Please register before proceed!',
+                'success' => false,
+                'isVerified' => false,
+            ], 404);
+        }
+        if (!Auth::attempt($validated)) {
+            return response()->json(['message' => 'Invalid credentials', 'success' => false], 401);
         }
         $user = Auth::user();
 
         if (!$user->hasVerifiedEmail()) {
-            $this->generateOTP($user->email, $user->username);
-
+            $this->otpService->sendOTP($user->email, $user->username);
             return response()->json([
                 'message' => 'Redirect to verification',
-                'success' => false,
+                'success' => true,
                 'isVerified' => false,
-            ]);
+                "user" => $user
+            ], 202);
         }
+        Log::info("AUTH USER", [
+            'user' => Auth::user()
+        ]);
         return response()->json([
             "success" => true,
             "message" => "Successfully Logged in!",
             "user" => new UserResource(Auth::user()),
             'isVerified' => true,
 
-        ]);
+        ], 200);
     }
 
     public function user()
     {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                "success" => false,
+                "message" => "User not authenticated!",
+            ], 401);
+        }
         return response()->json([
+            "success" => true,
             "message" => "Retrived user details!",
             "user" => new UserResource(Auth::user())
-        ]);
+        ], 200);
     }
 
     public function logout()
@@ -81,28 +109,25 @@ class AuthController extends Controller
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 
-        return response()->json(['message' => 'Logged out']);
+        return response()->json(['message' => 'Logged out', 'success' => true], 200);
     }
-    public function generateOTP(string $email, string $username)
+    public function generateOTP(Request $request)
+
     {
-
-        Log::info(" generateOTP hit", [
-            'message' => "hit the funcion geneateOTP",
-            'email' => $email,
+        $validate = $request->validate([
+            'email' => 'required',
+            'username' => 'required'
         ]);
-        OTP::where('email', $email)->where('is_used', false)->delete();
-        $otpCode = random_int(100000, 999999);
+        Log::info("username and email ", [
+            "validate" => $validate,
 
-        OTP::create([
-            'email' => $email,
-            'code' => $otpCode,
-            'expires_at' => Carbon::now()->addMinutes(1)
         ]);
-        event(new OTPEmailEvent([
-            'email' => $email,
-            'username' => $username,
-            'otp' => $otpCode,
-        ]));
+        $this->otpService->sendOTP($validate['email'], $validate['username']);
+
+        return response()->json([
+            "success" => true,
+            "message" => "OTP has been sent to your email!",
+        ], 200);
     }
     public function verifyOTP(Request $request)
     {
@@ -111,33 +136,24 @@ class AuthController extends Controller
             'code' => 'required|numeric|digits:6',
         ]);
 
-        $otp = OTP::where('email', operator: $validate['email'])->where('code', $validate['code'])->first();
-        if (!$otp) {
-            return response()->json(['message' => 'Invalid OTP.', 'success' => false], 422);
+        try {
+
+            $user = $this->otpService->verifyOTP(
+                $validate['email'],
+                $validate['code']
+            );
+
+            return response()->json([
+                "success" => true,
+                "message" => "Verification Successful!",
+                "user" => $user
+            ], 200);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                "success" => false,
+                "message" => $e->getMessage()
+            ], 422);
         }
-
-
-        if ($otp->is_used) {
-            return response()->json(['message' => 'OTP already used.', 'success' => false], 422);
-        }
-
-        if (Carbon::now()->greaterThan($otp->expires_at)) {
-            return response()->json(['message' => 'OTP expired.', 'success' => false], 422);
-        }
-
-        $otp->update(['is_used' => true]);
-        $user = User::where('email', $validate['email'])->firstOrFail();
-        Log::info("GETTING USER", [
-            'user' => $user
-        ]);
-        $user->update(['email_verified_at' => now(), 'email_verified' => true]);
-
-        Auth::login($user);
-
-        return response()->json([
-            "success" => true,
-            "message" => "Verification Successful!",
-            "user" => $user
-        ]);
     }
 }

@@ -1,0 +1,28 @@
+200	OK / Success
+201	Created successfully
+202	Accepted (processing later)
+204	Success, no content
+400	Bad request
+401	Not authenticated
+403	No permission
+404	Not found
+405	Method not allowed
+409	Conflict / Duplicate
+415	Wrong content type
+422	Validation error
+429	Too many requests
+500	Server error
+502	Bad gateway
+503	Service unavailable
+504	Gateway timeout
+
+Most used in APIs:
+
+✅ 200 → GET success
+✅ 201 → POST created
+✅ 204 → DELETE success
+❌ 401 → Login/token issue
+❌ 403 → Permission issue
+❌ 404 → Data not found
+❌ 422 → Validation failed
+❌ 500 → Backend crash

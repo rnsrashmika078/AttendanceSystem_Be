@@ -103,7 +103,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/generate-otp', [AuthController::class, 'generateOTP'])->middleware('auth:sanctum');
+Route::post('/generate-otp', [AuthController::class, 'generateOTP'])->middleware('throttle:otp');
 Route::post('/verify-otp', [AuthController::class, 'verifyOTP']);
 
 

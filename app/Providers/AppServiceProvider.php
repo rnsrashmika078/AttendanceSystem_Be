@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,8 +24,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
         Broadcast::routes(['middleware' => ['auth:sanctum']]);
         require base_path('routes/channels.php');
 
+        RateLimiter::for('otp', function (Request $request) {
+            return Limit::perMinute(2)->by($request->user() ? $request->user()->id : $request->ip());
+        });
     }
 }
