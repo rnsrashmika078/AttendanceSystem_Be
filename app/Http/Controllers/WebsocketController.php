@@ -31,19 +31,19 @@ class WebsocketController extends Controller
     }
     public function session(Request $request)
     {
-        $validate = $request->validate([
+        $validated = $request->validate([
             'message' => 'required|string',
-            'session_id' => 'required|string',
+            'session_id' => 'required|integer',
         ]);
         $sender = Auth::user();
 
         event(new PresenceChannelEvent(
-            $request->message,
-            $validate['session_id'],
+            $validated['message'],
+            $validated['session_id'],
             $sender
         ));
         Log::info('Session event triggered', [
-            'session_id' => $validate['session_id'],
+            'session_id' => $validated['session_id'],
             'user_id' => $sender->id
         ]);
         return response()->json([

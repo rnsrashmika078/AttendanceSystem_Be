@@ -109,8 +109,8 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOTP']);
 
 
 // refine ( WEBSOCKET -> REVERB )
-Route::post('send-message', [WebsocketController::class, 'sendMessage'])->middleware('auth:sanctum');
-Route::post('session', [WebsocketController::class, 'session'])->middleware('auth:sanctum');
+Route::post('/realtime/private', [WebsocketController::class, 'sendMessage'])->middleware('auth:sanctum');
+Route::post('/realtime/presence', [WebsocketController::class, 'session'])->middleware('auth:sanctum');
 
 
 // refine ( Subjects )
@@ -118,7 +118,16 @@ Route::prefix('v1/subjects')->group(function () {
     Route::post('/', [SubjectController::class, "addSubject"]);
     Route::get('/', [SubjectController::class, "getAllSubjects"]);
     Route::delete('/', [SubjectController::class, "removeSubject"]);
+    Route::get('/id',  [SubjectController::class, "getSubject"]);
 });
 Route::prefix('v1/users')->group(function () {
     Route::get('/', [UserController::class, "getLecturers"]);
+});
+
+
+Route::post('/react-native', function () {
+    return response()->json([
+        'message' => "HI REACT NATIVE",
+        'status' => 200,
+    ]);
 });

@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function getLecturers(Request $request)
     {
-        $cache = Cache::get('lecturers');
+        $cache = Cache::get(key: 'lecturers');
         if ($cache) {
             $result = [
                 'success' => true,

@@ -18,12 +18,7 @@ class PublicChannelEvent implements ShouldBroadcastNow
      * Create a new event instance.
      */
 
-    public $message;
-    public function __construct($message)
-    {
-        //
-        $this->message = $message;
-    }
+    public function __construct($message) {}
 
     /**
      * Get the channels the event should broadcast on.
