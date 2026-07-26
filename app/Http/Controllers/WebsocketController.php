@@ -33,7 +33,7 @@ class WebsocketController extends Controller
     {
         $validated = $request->validate([
             'message' => 'required|string',
-            'session_id' => 'required|integer',
+            'session_id' => 'required|string',
         ]);
         $sender = Auth::user();
 

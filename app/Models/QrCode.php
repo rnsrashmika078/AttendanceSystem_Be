@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class QrCode extends Model
 {
     use HasFactory;
     protected $fillable = [
         'id',
-        'qr_code'
+        'qr_code',
+        'course_id',
     ];
 }

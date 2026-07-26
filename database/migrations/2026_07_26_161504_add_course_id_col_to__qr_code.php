@@ -11,15 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendances', function (Blueprint $table) {
-            $table->id();
-            $table->boolean('status')->default(false);
+        Schema::table('qr_codes', function (Blueprint $table) {
             $table->string('course_id');
-            $table->integer('user_id');
-            $table->string('reg_number');
-            $table->string('name');
-            $table->string('email');
-            $table->timestamps();
         });
     }
 
@@ -28,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendances');
+        Schema::table('qr_codes', function (Blueprint $table) {
+            $table->dropColumn('course_id');
+        });
     }
 };

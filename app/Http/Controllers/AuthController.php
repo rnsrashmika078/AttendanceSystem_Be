@@ -58,7 +58,7 @@ class AuthController extends Controller
                 'message' => 'User not found..Please register before proceed!',
                 'success' => false,
                 'isVerified' => false,
-            ], 404);
+            ], status: 404);
         }
         if (!Auth::attempt($validated)) {
             return response()->json(['message' => 'Invalid credentials', 'success' => false], 401);
@@ -82,7 +82,7 @@ class AuthController extends Controller
             "message" => "Successfully Logged in!",
             "user" => new UserResource(Auth::user()),
             'isVerified' => true,
-
+            'token' => $user->createToken('mobile-token')->plainTextToken
         ], 200);
     }
 
@@ -105,7 +105,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 

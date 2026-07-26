@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('time_ranges', function (Blueprint $table) {
-            $table->id();
-            $table->integer('table_id');
-            $table->string('start_time')->nullable();
-            $table->string('end_time')->nullable();
-            $table->timestamps();
+        Schema::table('attendances', function (Blueprint $table) {
+            $table->integer("user_id");
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('time_ranges');
+        Schema::table('attendances', function (Blueprint $table) {
+            $table->dropColumn('user_id');
+        });
     }
 };

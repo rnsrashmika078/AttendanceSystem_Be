@@ -3,70 +3,55 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
-use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class AttendanceController extends Controller
 {
-    public function markAttendance(Request $request)
+
+    public function getAttendanceResult(Request $request)
     {
-        $request->validate([
-            'attendance' => 'required',
-            'subject_code' => 'required',
-            'student_reg_no' => 'required',
-            'student_name' => 'required',
-        ]);
-
-
-
-        $record = Attendance::create([
-            'attendance' => $request->attendance,
-            'subject_code' => $request->subject_code,
-            'student_reg_no' => $request->student_reg_no,
-            'student_name' => $request->student_name,
-        ]);
-        $record->created_at = Carbon::parse($record->created_at)->setTimezone('Asia/Colombo');
-
-        if (!$record) {
+        try {
+            $validated = $request->validate([
+                'course_id' => 'required|string'
+            ]);
+            $subject = Attendance::where('course_id', $validated['course_id'])->get();
+            if ($subject->isEmpty()) {
+                return response()->json([
+                    'message' => "No result found!",
+                    'success' => false,
+                    'result' => [],
+                    'error' => null
+                ], 200);
+            }
             return response()->json([
-                'status' => false,
-                'message' => "Your attendance has been recorded successfully!",
+                'message' => "Attendance result",
+                'success' => true,
+                'result' =>  $subject,
+                'error' => null
+            ], 200);
+        } catch (ValidationException $e) {
+            Log::info("EXCEPTION", [
+                'validation error' => $e->getMessage(),
+            ]);
+            return response()->json([
+                'message' => 'Validation Error',
+                'success' => false,
+                'result' => [],
+                'error' => $e->getMessage()
+            ]);
+        } catch (Exception $e) {
+            Log::info("EXCEPTION", [
+                'error' => $e->getMessage()
+            ]);
+            return response()->json([
+                'message' => 'something went wrong. please try again',
+                'success' => false,
+                'result' => [],
+                'error' => $e->getMessage()
             ]);
         }
-        return response()->json([
-            'status' => true,
-            'message' => "Your attendance has been recorded successfully!",
-            'record' => $record,
-        ]);
-    }
-    public function getAttendanceResult($date, $subject_code)
-    {
-        $selectedDate = Carbon::parse($date);
-        $subject = Attendance::where('subject_code', $subject_code)->first();
-
-        if (!$subject) {
-            return response()->json(['message' => 'No record of this subject being conducted on the specified date.']);
-        }
-
-        if (!$selectedDate) {
-            return response()->json(['message' => 'The subject was not conducted on the specified date.']);
-        }
-
-        $attendace = Attendance::where('subject_code', $subject_code)
-            ->whereDate('created_at', $selectedDate)
-            ->get();
-
-
-        if (!$attendace) {
-            return response()->json([
-                'status' => false,
-                'message' => "Failed While Attendace Marking!"
-            ], 404);
-        }
-        return response()->json([
-            'status' => true,
-            'message' => "Retrive Attendace of $subject_code on $date",
-            'data' => $attendace,
-        ]);
     }
 }
